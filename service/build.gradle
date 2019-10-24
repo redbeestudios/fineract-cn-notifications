@@ -19,30 +19,31 @@ buildscript {
     ext {
         springBootVersion = '1.4.1.RELEASE'
     }
-
     repositories {
         jcenter()
     }
 
     dependencies {
-        classpath ("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath('se.transmode.gradle:gradle-docker:1.2')
     }
 }
 
 plugins {
     id "com.github.hierynomus.license" version "0.13.1"
-    id("org.nosphere.apache.rat") version "0.3.1"
+    id("org.nosphere.apache.rat") version "0.5.2"
     id "com.jfrog.artifactory" version "4.9.5"
+    id "org.springframework.boot" version "1.4.3.RELEASE"
+    id 'maven-publish'
+    id 'java'
+    id 'idea'
 }
 
 apply from: '../shared.gradle'
 
-apply plugin: 'spring-boot'
 apply plugin: 'docker'
 
-springBoot {
-    executable = true
+bootRepackage {
+    enabled = true
     classifier = 'boot'
 }
 
@@ -50,6 +51,7 @@ dependencies {
     compile(
             [group: 'com.twilio.sdk', name: 'twilio', version: versions.twilioapi],
             [group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: versions.springjavamail],
+            [group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'],
 
             [group: 'org.apache.fineract.cn.customer', name: 'api', version: versions.fineractcncustomer],
             [group: 'org.apache.fineract.cn.portfolio', name: 'api', version: versions.fineractcnportfolio],
@@ -65,10 +67,13 @@ dependencies {
             [group: 'org.apache.fineract.cn', name: 'lang', version: versions.frameworklang],
             [group: 'org.apache.fineract.cn', name: 'async', version: versions.frameworkasync],
             [group: 'org.apache.fineract.cn', name: 'cassandra', version: versions.frameworkcassandra],
-            [group: 'org.apache.fineract.cn', name: 'mariadb', version: versions.frameworkmariadb],
+            [group: 'org.apache.fineract.cn', name: 'postgresql', version: versions.frameworkpostgresql],
             [group: 'org.apache.fineract.cn', name: 'command', version: versions.frameworkcommand],
             [group: 'org.apache.fineract.cn.permitted-feign-client', name: 'library', version: versions.frameworkpermittedfeignclient],
             [group: 'org.hibernate', name: 'hibernate-validator', version: versions.validator],
+            [group: 'org.apache.commons', name: 'commons-csv', version: versions.apachecsvreader],
+            [group: 'io.netty', name: 'netty-all', version: '4.1.39.Final'],
+            [group: 'io.netty', name: 'netty-transport-native-epoll', version: '4.1.39.Final'],
             [group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '4.11'],
             [group: 'ch.qos.logback', name: 'logback-core', version: '1.1.8']
     )
@@ -83,7 +88,9 @@ dependencies {
     }
 }
 
-publishToMavenLocal.dependsOn bootRepackage
+tasks.withType(PublishToMavenLocal) { task ->
+    task.dependsOn 'bootRepackage'
+}
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
