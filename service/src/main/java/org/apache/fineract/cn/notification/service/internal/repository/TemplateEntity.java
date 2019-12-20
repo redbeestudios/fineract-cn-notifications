@@ -30,10 +30,14 @@ public class TemplateEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-	@Column(name = "identifier")
-	private String identifier;
-	@Column(name = "event")
-	private String event;
+	@Column(name = "template_identifier")
+	private String templateIdentifier;
+	@Column(name = "subject")
+	private String subject;
+	@Column(name = "sender_email")
+	private String senderEmail;
+	@Column(name = "message")
+	private String message;
 	@Column(name = "url")
 	private String url;
 	
@@ -50,20 +54,36 @@ public class TemplateEntity {
 		this.id = id;
 	}
 	
-	public String getIdentifier() {
-		return this.identifier;
+	public String getTemplateIdentifier() {
+		return templateIdentifier;
 	}
 	
-	public void setIdentifier(final String identifier) {
-		this.identifier = identifier;
+	public void setTemplateIdentifier(String templateIdentifier) {
+		this.templateIdentifier = templateIdentifier;
 	}
 	
-	public String getEvent() {
-		return event;
+	public String getSubject() {
+		return subject;
 	}
 	
-	public void setEvent(String event) {
-		this.event = event;
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+	
+	public String getSenderEmail() {
+		return senderEmail;
+	}
+	
+	public void setSenderEmail(String senderEmail) {
+		this.senderEmail = senderEmail;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
 	}
 	
 	public String getUrl() {
@@ -80,22 +100,24 @@ public class TemplateEntity {
 		if (o == null || getClass() != o.getClass()) return false;
 		TemplateEntity that = (TemplateEntity) o;
 		return Objects.equals(id, that.id) &&
-				Objects.equals(identifier, that.identifier) &&
-				Objects.equals(event, that.event) &&
+				Objects.equals(templateIdentifier, that.templateIdentifier) &&
+				Objects.equals(subject, that.subject) &&
 				Objects.equals(url, that.url);
 	}
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, identifier, event, url);
+		return Objects.hash(id, templateIdentifier, subject, message, url);
 	}
 	
 	@Override
 	public String toString() {
 		return "TemplateEntity{" +
 				"id=" + id +
-				", identifier='" + identifier + '\'' +
-				", event='" + event + '\'' +
+				", templateIdentifier='" + templateIdentifier + '\'' +
+				", subject='" + subject + '\'' +
+				", message='" + message + '\'' +
+				", senderEmail='" + senderEmail + '\'' +
 				", url='" + url + '\'' +
 				'}';
 	}

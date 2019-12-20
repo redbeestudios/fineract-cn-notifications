@@ -24,10 +24,8 @@ import org.apache.fineract.cn.command.gateway.CommandGateway;
 import org.apache.fineract.cn.lang.ServiceException;
 import org.apache.fineract.cn.notification.api.v1.PermittableGroupIds;
 import org.apache.fineract.cn.notification.api.v1.domain.SMSConfiguration;
-import org.apache.fineract.cn.notification.api.v1.domain.SMSConfiguration;
 import org.apache.fineract.cn.notification.service.ServiceConstants;
 import org.apache.fineract.cn.notification.service.internal.command.*;
-import org.apache.fineract.cn.notification.service.internal.service.NotificationService;
 import org.apache.fineract.cn.notification.service.internal.service.SMSService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @RestController
-@RequestMapping("/configuration/sms/")
+@RequestMapping("/configuration/sms")
 public class SMSServiceRestController {
 	
 	private final Logger logger;
@@ -61,15 +59,14 @@ public class SMSServiceRestController {
 	
 	@Permittable(value = AcceptedTokenType.TENANT, groupId = PermittableGroupIds.SELF_MANAGEMENT)
 	@RequestMapping(
-			value = "/active",
 			method = RequestMethod.GET,
 			consumes = MediaType.ALL_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	public
 	@ResponseBody
-	List<SMSConfiguration> findAllActiveSMSConfigurationEntities() {
-		return this.smsService.findAllActiveSMSConfigurationEntities();
+	List<SMSConfiguration> findAllSMSConfigurationEntities() {
+		return this.smsService.findAllSMSConfigurationEntities();
 	}
 	
 	@Permittable(value = AcceptedTokenType.TENANT, groupId = PermittableGroupIds.SELF_MANAGEMENT)
@@ -89,14 +86,13 @@ public class SMSServiceRestController {
 	
 	@Permittable(value = AcceptedTokenType.TENANT, groupId = PermittableGroupIds.SELF_MANAGEMENT)
 	@RequestMapping(
-			value = "/create",
 			method = RequestMethod.POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	public
 	@ResponseBody
-	ResponseEntity<Void> createSMSConfiguration(@RequestBody @Valid final SMSConfiguration smsConfiguration) throws InterruptedException {
+	ResponseEntity<Void> createSMSConfiguration(@RequestBody @Valid final SMSConfiguration smsConfiguration) {
 		if (this.smsService.smsConfigurationExists(smsConfiguration.getIdentifier())) {
 			throw ServiceException.conflict("Configuration {0} already exists.", smsConfiguration.getIdentifier());
 		}
@@ -106,7 +102,7 @@ public class SMSServiceRestController {
 	}
 	
 	@Permittable(value = AcceptedTokenType.TENANT, groupId = PermittableGroupIds.SELF_MANAGEMENT)
-	@RequestMapping(value = "/update",
+	@RequestMapping(
 			method = RequestMethod.PUT,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE
@@ -119,7 +115,7 @@ public class SMSServiceRestController {
 	}
 	
 	@Permittable(value = AcceptedTokenType.TENANT, groupId = PermittableGroupIds.SELF_MANAGEMENT)
-	@RequestMapping(value = "/delete/{identifier}",
+	@RequestMapping(value = "/{identifier}",
 			method = RequestMethod.DELETE,
 			consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE
