@@ -39,12 +39,12 @@ import javax.sql.DataSource;
 })
 @Aggregate
 public class MigrationCommandHandler {
-	
+
 	private final Logger logger;
 	private final DataSource dataSource;
 	private final FlywayFactoryBean flywayFactoryBean;
 	private final ApplicationName applicationName;
-	
+
 	@Autowired
 	public MigrationCommandHandler(@Qualifier(ServiceConstants.LOGGER_NAME) final Logger logger,
 	                               final DataSource dataSource,
@@ -56,13 +56,13 @@ public class MigrationCommandHandler {
 		this.flywayFactoryBean = flywayFactoryBean;
 		this.applicationName = applicationName;
 	}
-	
+
 	@CommandHandler(logStart = CommandLogLevel.INFO, logFinish = CommandLogLevel.INFO)
 	@Transactional
 	@EventEmitter(selectorName = NotificationEventConstants.SELECTOR_NAME, selectorValue = NotificationEventConstants.INITIALIZE)
 	public String initialize(final InitializeServiceCommand initializeServiceCommand) {
 		this.logger.debug("Start service migration.");
 		this.flywayFactoryBean.create(this.dataSource).migrate();
-		return this.applicationName.getVersionString();
+		return  NotificationEventConstants.INITIALIZE;//this.applicationName.getVersionString();
 	}
 }
